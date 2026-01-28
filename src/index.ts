@@ -5,13 +5,15 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 let tray
 const icon = nativeImage.createFromDataURL('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAACTSURBVHgBpZKBCYAgEEV/TeAIjuIIbdQIuUGt0CS1gW1iZ2jIVaTnhw+Cvs8/OYDJA4Y8kR3ZR2/kmazxJbpUEfQ/Dm/UG7wVwHkjlQdMFfDdJMFaACebnjJGyDWgcnZu1/lrCrl6NCoEHJBrDwEr5NrT6ko/UV8xdLAC2N49mlc5CylpYh8wCwqrvbBGLoKGvz8Bfq0QPWEUo/EAAAAASUVORK5CYII=')
+let mainWindow: BrowserWindow | null = null;
+
 
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
 const createWindow = (): void => {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     height: 600,
     width: 800,
     webPreferences: {
@@ -20,6 +22,7 @@ const createWindow = (): void => {
   });
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+  setInterval(sendData, 1000)
 };
 
 app.on('ready', createWindow);
@@ -44,9 +47,18 @@ app.whenReady().then(() => {
 
   tray.setContextMenu(contextMenu)
 
-  for (const [key, value] of Object.entries(funcs)) {
+  /*for (const [key, value] of Object.entries(funcs)) {
     ipcMain.handle(key, async () => {
       return value();
     });
-  }
+  }*/
+
+
 })
+
+const sendData = () => {
+  for (const [key, value] of Object.entries(funcs)) {
+    mainWindow.webContents.send(key, value());
+  }
+}
+

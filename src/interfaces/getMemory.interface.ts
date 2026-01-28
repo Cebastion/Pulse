@@ -1,7 +1,9 @@
-export interface IGetMemory {
-  (): Promise<{
-    total: number;
-    free: number;
-    available: number;
-  }>;
+interface IGetMemory {
+  total: number;
+  free: number;
+  available: number;
 }
+
+export type GetMemory = (
+  callback: (data: IGetMemory) => void
+) => void;

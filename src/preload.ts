@@ -1,10 +1,21 @@
 import { contextBridge, ipcRenderer } from "electron";
 import funcs from "./objects/funcs.object";
 
-const exposedFuncs: Record<string, () => Promise<any>> = {};
+type Callback = (data: any) => void;
+
+const exposedFuncs: Record<
+  string,
+  (callback: Callback) => void
+> = {};
 
 for (const [key] of Object.entries(funcs)) {
-  exposedFuncs[key] = () => ipcRenderer.invoke(key);
+  exposedFuncs[key] = (callback: Callback) => {
+    ipcRenderer.on(key, (_event, data) => callback(data));
+  };
 }
 
 contextBridge.exposeInMainWorld('bridge', exposedFuncs);
+
+
+  //exposedFuncs[key] = () => ipcRenderer.invoke(key);
+

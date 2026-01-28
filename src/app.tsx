@@ -4,9 +4,7 @@ const App = () => {
   const [memory, setMemory] = useState<any>(null);
 
   useEffect(() => {
-    window.bridge.getMemory().then((data) => {
-      setMemory(data);
-    });
+    window.bridge.getMemory(data => setMemory(data));
   }, []);
 
   return (
@@ -14,7 +12,7 @@ const App = () => {
       <h1>Hello Electron + React + TS</h1>
       {memory && (
         <div>
-          <p>Total Memory: {memory.total}</p>
+          <p className='text-xl text-red'>Total Memory: {memory.total}</p>
           <p>Free Memory: {memory.free}</p>
         </div>
       )}
