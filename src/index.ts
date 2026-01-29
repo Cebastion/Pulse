@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, ipcRenderer, Tray } from 'electron';
+import { app, BrowserWindow, Tray } from 'electron';
 import funcs from './objects/funcs.object';
 import path from 'path';
 import positioner from 'electron-traywindow-positioner';
@@ -69,7 +69,7 @@ app.whenReady().then(() => {
 
     if (mainWindow?.isVisible()) {
       mainWindow.hide();
-
+      mainWindow.webContents.send('stop-animation');
     } else {
       mainWindow.setAlwaysOnTop(true, "pop-up-menu");
       mainWindow.setPosition(position.x, position.y + 5);

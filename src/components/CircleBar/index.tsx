@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import RAM from "../../assets/ram-memory.svg"
 import CPU from "../../assets/cpu.svg"
@@ -13,7 +13,7 @@ const CircleBar = ({ value, type }: ProgressProps) => {
   const [mouseMove, setMouseMove] = useState(false)
   const radius = 42;
   const circumference = 2 * Math.PI * radius;
-
+  const offset = circumference - (value / 100) * circumference
 
   return (
     <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} onMouseEnter={() => setMouseMove(true)} onMouseLeave={() => setMouseMove(false)}>
@@ -38,21 +38,34 @@ const CircleBar = ({ value, type }: ProgressProps) => {
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={circumference}
-            animate={{ strokeDashoffset: value }}
+            animate={{ strokeDashoffset: offset }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
           />
         </svg>
 
-        {mouseMove ? (
-          <div className="absolute text-white">
-            {value}%
-          </div>
-        ) : (
-          <div className="absolute flex items-center gap-1 flex-col">
-            <img src={type === "cpu" ? CPU : type === "disk" ? DISK : RAM} alt="" className="w-6 h-6" />
-            <span className="text-white">{type === "cpu" ? "CPU" : type === "disk" ? "DISK" : "RAM"}</span>
-          </div>
-        )}
+        <AnimatePresence mode="wait">
+          {mouseMove ? (
+            <motion.div key="value"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.15 }}
+              className="absolute text-white">
+              {value}%
+            </motion.div>
+          ) : (
+            <motion.div key="icon"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.15 }}
+              className="absolute flex items-center gap-1 flex-col">
+              <img src={type === "cpu" ? CPU : type === "disk" ? DISK : RAM} alt="" className="w-6 h-6" />
+              <span className="text-white">{type === "cpu" ? "CPU" : type === "disk" ? "DISK" : "RAM"}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
       </div>
     </motion.div>
   )

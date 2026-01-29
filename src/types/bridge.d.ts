@@ -10,7 +10,8 @@ declare global {
       getMemory: GetMemory;
       getCPU: GetCPU;
       getDisk: GetDisk;
-      startAnimation: (callback: () => void) => void
+      startAnimation: (callback: () => void) => void;
+      stopAnimation: (callback: () => void) => void;
     };
   }
 
