@@ -1,8 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RAM from "../../assets/ram-memory.svg"
 import CPU from "../../assets/cpu.svg"
 import DISK from "../../assets/disk-storage.svg"
+import { Color } from "../../enum/color.enum";
 
 interface ProgressProps {
   type: "ram" | "cpu" | "disk";
@@ -11,9 +12,16 @@ interface ProgressProps {
 
 const CircleBar = ({ value, type }: ProgressProps) => {
   const [mouseMove, setMouseMove] = useState(false)
+  const [color, setColor] = useState("#3b82f6")
   const radius = 42;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (value / 100) * circumference
+
+  useEffect(() => {
+    if (value < 50) setColor(Color.BLUE)
+    else if (value < 80) setColor(Color.ORANGE)
+    else setColor(Color.RED)
+  }, [value])
 
   return (
     <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} onMouseEnter={() => setMouseMove(true)} onMouseLeave={() => setMouseMove(false)}>
@@ -32,13 +40,13 @@ const CircleBar = ({ value, type }: ProgressProps) => {
             cx="60"
             cy="60"
             r={radius}
-            stroke="#3b82f6"
             strokeWidth="10"
             fill="transparent"
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={circumference}
-            animate={{ strokeDashoffset: offset }}
+            initial={{ stroke: color }}
+            animate={{ strokeDashoffset: offset, stroke: color }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
           />
         </svg>
