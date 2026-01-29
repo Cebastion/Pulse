@@ -1,0 +1,7 @@
+CompileFlags:
+  Add:
+    - "-I/home/ddd/Projects/Pulse/src/addons/watchTrayAddon/node_modules/node-addon-api"
+    - "-I/home/ddd/.cache/node-gyp/22.12.0/include/node"
+    - "-I/usr/include/dbus-1.0"
+    - "-I/usr/lib/x86_64-linux-gnu/dbus-1.0/include"
+
