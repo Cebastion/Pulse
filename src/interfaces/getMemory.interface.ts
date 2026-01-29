@@ -1,9 +1,9 @@
-interface IGetMemory {
+interface IMemory {
   total: number;
   free: number;
-  available: number;
+  percent: number;
 }
 
 export type GetMemory = (
-  callback: (data: IGetMemory) => void
+  callback: (data: IMemory) => void
 ) => void;

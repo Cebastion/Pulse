@@ -1,7 +1,7 @@
-export interface IGetCPU {
-  (): Promise<{
-    percentCPUUsage: number;
-    cumulativeCPUUsage: number;
-    idleWakeupsPerSecond: number;
-  }>;
+interface ICPU {
+  percent: number;
 }
+
+export type GetCPU = (
+  callback: (data: ICPU) => void
+) => void;

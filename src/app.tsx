@@ -1,22 +1,28 @@
-import { useEffect, useState } from 'react';
+import { motion, useAnimation } from 'framer-motion';
+import { useEffect } from 'react';
+import CircleBar from './components/CircleBar';
+import useSystem from './hooks/useSystem';
 
 const App = () => {
-  const [memory, setMemory] = useState<any>(null);
+  const { memory, cpu, disk } = useSystem();
+  const controls = useAnimation();
 
   useEffect(() => {
-    window.bridge.getMemory(data => setMemory(data));
+    const handler = () => {
+      controls.set({ opacity: 0, y: -20 });
+      controls.start({ opacity: 1, y: 0 });
+    };
+    window.bridge.startAnimation(handler);
   }, []);
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Hello Electron + React + TS</h1>
-      {memory && (
-        <div>
-          <p className='text-xl text-red'>Total Memory: {memory.total}</p>
-          <p>Free Memory: {memory.free}</p>
-        </div>
-      )}
-    </div>
+    <motion.div animate={controls} className='bg-black rounded-2xl'>
+      <div className='flex gap-4'>
+        <CircleBar value={memory?.percent} type="ram" />
+        <CircleBar value={disk?.percent} type="disk" />
+        <CircleBar value={cpu?.percent} type="cpu" />
+      </div>
+    </motion.div>
   );
 };
 

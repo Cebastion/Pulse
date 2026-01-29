@@ -13,6 +13,10 @@ rules.push({
         'postcss-loader',
       ],
     },
+    {
+      test: /\.svg$/,
+      type: 'asset/resource',
+    }
   ],
 });
 

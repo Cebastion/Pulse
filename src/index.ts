@@ -1,64 +1,82 @@
-import { app, BrowserWindow, ipcMain, Menu, nativeImage, Tray } from 'electron';
+import { app, BrowserWindow, ipcMain, ipcRenderer, Tray } from 'electron';
 import funcs from './objects/funcs.object';
+import path from 'path';
+import positioner from 'electron-traywindow-positioner';
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
-let tray
-const icon = nativeImage.createFromDataURL('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAACTSURBVHgBpZKBCYAgEEV/TeAIjuIIbdQIuUGt0CS1gW1iZ2jIVaTnhw+Cvs8/OYDJA4Y8kR3ZR2/kmazxJbpUEfQ/Dm/UG7wVwHkjlQdMFfDdJMFaACebnjJGyDWgcnZu1/lrCrl6NCoEHJBrDwEr5NrT6ko/UV8xdLAC2N49mlc5CylpYh8wCwqrvbBGLoKGvz8Bfq0QPWEUo/EAAAAASUVORK5CYII=')
 let mainWindow: BrowserWindow | null = null;
+let tray: Tray | null = null
+let position: { x: number, y: number } | null = null
 
-
-if (require('electron-squirrel-startup')) {
-  app.quit();
-}
-
-const createWindow = (): void => {
-  mainWindow = new BrowserWindow({
-    height: 600,
-    width: 800,
-    webPreferences: {
-      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
-    },
-  });
-
-  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-  setInterval(sendData, 1000)
-};
-
-app.on('ready', createWindow);
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
-
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
-});
-
-app.whenReady().then(() => {
-  tray = new Tray(icon)
-  const contextMenu = Menu.buildFromTemplate([
-    { role: 'quit' }
-  ])
-
-  tray.setContextMenu(contextMenu)
-
-  /*for (const [key, value] of Object.entries(funcs)) {
-    ipcMain.handle(key, async () => {
-      return value();
-    });
-  }*/
-
-
-})
+const icon = path.join(
+  app.getAppPath(),
+  "src",
+  "assets",
+  "dark-icon.png"
+);
 
 const sendData = () => {
   for (const [key, value] of Object.entries(funcs)) {
     mainWindow.webContents.send(key, value());
   }
 }
+
+const createWindow = (): void => {
+  mainWindow = new BrowserWindow({
+    height: 200,
+    width: 400,
+    frame: false,
+    transparent: true,
+    show: false,
+    resizable: false,
+    alwaysOnTop: true,
+    skipTaskbar: true,
+    roundedCorners: true,
+    webPreferences: {
+      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+    },
+  });
+
+  mainWindow.on('blur', () => {
+    mainWindow?.hide();
+  });
+
+  mainWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.key === 'Escape') {
+      mainWindow?.hide();
+      event.preventDefault();
+    }
+  });
+
+  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+  setInterval(sendData, 1000)
+
+};
+
+app.whenReady().then(() => {
+  tray = new Tray(icon)
+
+  tray.on("click", () => {
+    if (!mainWindow) {
+      createWindow();
+    }
+
+    if (!position) {
+      const { x, y } = positioner.calculate(mainWindow.getBounds(), tray.getBounds())
+      position = { x, y }
+    }
+
+    if (mainWindow?.isVisible()) {
+      mainWindow.hide();
+
+    } else {
+      mainWindow.setAlwaysOnTop(true, "pop-up-menu");
+      mainWindow.setPosition(position.x, position.y + 5);
+      mainWindow.show();
+      mainWindow.focus();
+      mainWindow.webContents.send('start-animation');
+    }
+  });
+})
 

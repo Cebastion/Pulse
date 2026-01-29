@@ -14,8 +14,10 @@ for (const [key] of Object.entries(funcs)) {
   };
 }
 
-contextBridge.exposeInMainWorld('bridge', exposedFuncs);
-
-
-  //exposedFuncs[key] = () => ipcRenderer.invoke(key);
-
+contextBridge.exposeInMainWorld('bridge', {
+  ...exposedFuncs,
+  startAnimation: (callback: () => void) => {
+    ipcRenderer.removeAllListeners('start-animation');
+    ipcRenderer.on('start-animation', callback);
+  },
+});

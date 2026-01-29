@@ -1,5 +1,5 @@
 const getCPU = () => {
-  return process.getCPUUsage()
+  return { percent: process.getCPUUsage().percentCPUUsage.toFixed(2) }
 }
 
 export default getCPU

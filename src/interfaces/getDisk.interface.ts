@@ -1,7 +1,10 @@
-export interface IGetDisk {
-  (): Promise<{
-    total: number;
-    free: number;
-    used: number;
-  }>;
+interface IDisk {
+  total: number;
+  free: number;
+  used: number;
+  percent: number;
 }
+
+export type GetDisk = (
+  callback: (data: IDisk) => void
+) => void;
