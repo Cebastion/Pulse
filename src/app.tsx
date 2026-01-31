@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import CircleBar from '../../components/CircleBar';
-import useSystem from '../../hooks/useSystem';
-import useVisible from '../../hooks/useVisible';
+import CircleBar from './components/CircleBar';
+import useSystem from './hooks/useSystem';
+import useVisible from './hooks/useVisible';
 
 const App = () => {
   const { memory, cpu, disk } = useSystem();
@@ -18,7 +18,9 @@ const App = () => {
             <CircleBar value={cpu?.percent} type="cpu" />
           </div>
           <div>
-            <button>setting</button>
+            <button className='bg-white px-4 py-2 rounded-2xl' onClick={() => {
+              window.bridge.toggleSetting()
+            }}>setting</button>
           </div>
         </motion.div>
       )}

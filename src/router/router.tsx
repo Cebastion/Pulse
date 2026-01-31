@@ -1,13 +1,15 @@
-import { createBrowserRouter } from "react-router";
+import { createHashRouter } from "react-router";
 import App from "../app";
+import Setting from "../screens/Setting";
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     element: <App />,
   },
   {
-    path: "/setting"
+    path: "/setting",
+    element: <Setting />
   }
 ]);
 

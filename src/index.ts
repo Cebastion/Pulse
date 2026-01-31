@@ -24,17 +24,18 @@ const sendData = () => {
   }
 }
 
-MyNativeAddon.watchTray().then(() => {
+/*MyNativeAddon.watchTray().then(() => {
   position = null;
-});
+});*/
 
 const createChildWindow = () => {
+  console.log("createChildWindow");
   childWindow = new BrowserWindow({
+    parent: mainWindow,
     height: 200,
     width: 400,
     frame: false,
     transparent: true,
-    show: false,
     resizable: false,
     alwaysOnTop: true,
     skipTaskbar: true,
@@ -44,7 +45,7 @@ const createChildWindow = () => {
     },
   });
 
-  childWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY + "/setting");
+  childWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY + "#/setting");
 }
 
 const createWindow = (): void => {
@@ -75,7 +76,8 @@ const createWindow = (): void => {
   });
 
   ipcMain.handle('toggle-setting', () => {
-    if (!childWindow) {
+    console.log('toggle-setting');
+    if (!childWindow || childWindow.isDestroyed()) {
       createChildWindow();
     } else {
       childWindow.destroy();
@@ -88,6 +90,8 @@ const createWindow = (): void => {
 
 app.whenReady().then(() => {
   tray = new Tray(icon)
+
+  console.log(MAIN_WINDOW_WEBPACK_ENTRY)
 
   tray.on("click", () => {
     if (!mainWindow) {
