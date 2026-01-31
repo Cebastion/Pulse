@@ -1,11 +1,13 @@
-import { app, BrowserWindow, Tray } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, Tray } from 'electron';
 import funcs from './objects/funcs.object';
 import path from 'path';
 import positioner from 'electron-traywindow-positioner';
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
+import MyNativeAddon from './addons/watchTrayAddon/js/index.js'
 
 let mainWindow: BrowserWindow | null = null;
+let childWindow: BrowserWindow | null = null;
 let tray: Tray | null = null
 let position: { x: number, y: number } | null = null
 
@@ -20,6 +22,29 @@ const sendData = () => {
   for (const [key, value] of Object.entries(funcs)) {
     mainWindow.webContents.send(key, value());
   }
+}
+
+MyNativeAddon.watchTray().then(() => {
+  position = null;
+});
+
+const createChildWindow = () => {
+  childWindow = new BrowserWindow({
+    height: 200,
+    width: 400,
+    frame: false,
+    transparent: true,
+    show: false,
+    resizable: false,
+    alwaysOnTop: true,
+    skipTaskbar: true,
+    roundedCorners: true,
+    webPreferences: {
+      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+    },
+  });
+
+  childWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY + "/setting");
 }
 
 const createWindow = (): void => {
@@ -49,9 +74,16 @@ const createWindow = (): void => {
     }
   });
 
+  ipcMain.handle('toggle-setting', () => {
+    if (!childWindow) {
+      createChildWindow();
+    } else {
+      childWindow.destroy();
+    }
+  });
+
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
   setInterval(sendData, 1000)
-
 };
 
 app.whenReady().then(() => {
@@ -79,4 +111,3 @@ app.whenReady().then(() => {
     }
   });
 })
-

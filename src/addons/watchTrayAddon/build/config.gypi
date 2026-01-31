@@ -443,6 +443,15 @@
     "nodedir": "/home/ddd/.cache/node-gyp/22.12.0",
     "python": "/usr/bin/python3",
     "standalone_static_library": 1,
-    "msvs_version": "2015"
+    "global_prefix": "/home/ddd/.nvm/versions/node/v22.12.0",
+    "init_module": "/home/ddd/.npm-init.js",
+    "globalconfig": "/home/ddd/.nvm/versions/node/v22.12.0/etc/npmrc",
+    "node_gyp": "/home/ddd/.nvm/versions/node/v22.12.0/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js",
+    "cache": "/home/ddd/.npm",
+    "npm_version": "11.6.4",
+    "prefix": "/home/ddd/.nvm/versions/node/v22.12.0",
+    "local_prefix": "/home/ddd/Projects/Pulse/src/addons/watchTrayAddon",
+    "userconfig": "/home/ddd/.npmrc",
+    "user_agent": "npm/11.6.4 node/v22.12.0 linux x64 workspaces/false"
   }
 }

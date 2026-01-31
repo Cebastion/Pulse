@@ -116,7 +116,8 @@ INCS_Debug := \
 	-I/usr/include/at-spi2-atk/2.0 \
 	-I/usr/include/at-spi-2.0 \
 	-I/usr/include/dbus-1.0 \
-	-I/usr/lib/x86_64-linux-gnu/dbus-1.0/include
+	-I/usr/lib/x86_64-linux-gnu/dbus-1.0/include \
+	-I/usr/include/dbus-1.0 /usr/lib/x86_64-linux-gnu/dbus-1.0/include
 
 DEFS_Release := \
 	'-DNODE_GYP_MODULE_NAME=cpp_addon' \
@@ -230,7 +231,8 @@ INCS_Release := \
 	-I/usr/include/at-spi2-atk/2.0 \
 	-I/usr/include/at-spi-2.0 \
 	-I/usr/include/dbus-1.0 \
-	-I/usr/lib/x86_64-linux-gnu/dbus-1.0/include
+	-I/usr/lib/x86_64-linux-gnu/dbus-1.0/include \
+	-I/usr/include/dbus-1.0 /usr/lib/x86_64-linux-gnu/dbus-1.0/include
 
 OBJS := \
 	$(obj).target/$(TARGET)/src/cpp_addon.o \
@@ -289,7 +291,8 @@ LIBS := \
 	-lgio-2.0 \
 	-lgobject-2.0 \
 	-lglib-2.0 \
-	-luuid
+	-luuid \
+	-ldbus-1
 
 $(obj).target/cpp_addon.node: GYP_LDFLAGS := $(LDFLAGS_$(BUILDTYPE))
 $(obj).target/cpp_addon.node: LIBS := $(LIBS)

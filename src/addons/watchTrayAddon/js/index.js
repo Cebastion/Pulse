@@ -1,36 +1,25 @@
-const EventEmitter = require('node:events')
+const { EventEmitter } = require('events');
+const path = require('path');
+const { app } = require('electron');
 
-// Load the native addon using the 'bindings' module
-// This will look for the compiled .node file in various places
-const bindings = require('bindings')
-const native = bindings('my_addon')
-
-// Create a nice JavaScript wrapper
 class MyNativeAddon extends EventEmitter {
   constructor() {
-    super()
+    super();
 
-    // Create an instance of our C++ class
-    this.addon = new native.MyAddon()
+    const addonPath = app.isPackaged
+      ? path.join(process.resourcesPath, 'cpp_addon.node')
+      : path.join(
+        process.cwd(),
+        'src/addons/watchTrayAddon/build/Release/cpp_addon.node'
+      );
+
+    const native = eval('require')(addonPath);
+    this.addon = new native.MyNativeAddon();
   }
 
-  // Wrap the C++ method with a nicer JavaScript API
-  helloWorld(input = '') {
-    if (typeof input !== 'string') {
-      throw new TypeError('Input must be a string')
-    }
-    return this.addon.helloWorld(input)
-  }
-}
-
-// Export a singleton instance
-if (process.platform === 'win32' || process.platform === 'darwin' || process.platform === 'linux') {
-  module.exports = new MyNativeAddon()
-} else {
-  // Provide a fallback for unsupported platforms
-  console.warn('Native addon not supported on this platform')
-
-  module.exports = {
-    helloWorld: (input) => `Hello from JS! You said: ${input}`
+  watchTray() {
+    return this.addon.watchTray();
   }
 }
+
+module.exports = new MyNativeAddon();

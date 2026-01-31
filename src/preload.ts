@@ -22,4 +22,7 @@ contextBridge.exposeInMainWorld('bridge', {
   stopAnimation: (cb: () => void) => {
     ipcRenderer.on("stop-animation", cb);
   },
+  toggleSetting: () => {
+    ipcRenderer.invoke('toggle-setting');
+  }
 });

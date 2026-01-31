@@ -12,6 +12,7 @@ declare global {
       getDisk: GetDisk;
       startAnimation: (callback: () => void) => void;
       stopAnimation: (callback: () => void) => void;
+      toggleSetting: () => void;
     };
   }
 

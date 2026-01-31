@@ -11,11 +11,13 @@
           "include_dirs": [
             "<!@(node -p \"require('node-addon-api').include\")",
             "include",
-            "<!@(pkg-config --cflags-only-I gtk+-3.0 | sed s/-I//g)"
+            "<!@(pkg-config --cflags-only-I gtk+-3.0 | sed s/-I//g)",
+            "<!(pkg-config --cflags-only-I dbus-1 | sed s/-I//g)"
           ],
           "libraries": [
             "<!@(pkg-config --libs gtk+-3.0)",
-            "-luuid"
+            "-luuid",
+            "<!@(pkg-config --libs dbus-1)"
           ],
           "cflags": [
             "-fexceptions",
@@ -28,7 +30,7 @@
             "-pthread"
           ],
           "ldflags": [
-            "-pthread"
+            "-pthread",
           ],
           "cflags!": ["-fno-exceptions"],
           "cflags_cc!": ["-fno-exceptions"],

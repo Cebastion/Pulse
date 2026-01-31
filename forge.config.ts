@@ -14,6 +14,9 @@ import { rendererConfig } from './webpack.renderer.config';
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
+    extraResource: [
+      './src/addons/watchTrayAddon/build/Release/cpp_addon.node'
+    ]
   },
   rebuildConfig: {},
   makers: [
